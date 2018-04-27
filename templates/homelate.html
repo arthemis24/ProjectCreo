@@ -1,0 +1,399 @@
+{% load i18n %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}?version=3.1">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}?version=3.1">
+        <title>CREOLINK - Equipements</title>
+
+        <!-- Bootstrap Core CSS -->
+        <script src="{% static 'js/jquery-1.8.2.min.js' %}"></script>
+        <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+        <script src="{% static 'js/ikwen-util.js' %}"></script>
+        <script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyBD5bSEUzqMvAeOCnEctZ52G1Qt-tFUP-s&sensor=true"></script>
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    <style>
+        #menu-toggle {background-image: url('{% static 'img/menu-icon.png' %}');background-size: 100% 40px; padding: 20px; margin-top: -15px; position: fixed; z-index: 20}#}
+        .b-text{background-color: #FFF;border-radius: 33px; color: #3c8f03; float: right;line-height:20px;margin-top: 5px;text-indent: 0;padding: 0 8px;}
+        .sidebar-nav > .sidebar-brand {height: 48px}
+        ul.sub {display: none; float: left; margin:0 0 0 30px}
+        ul li.has-sub {float: left; clear: both; width: 200px}
+        ul.sub li a {float: left;width: 200px;}
+        ul.sub li a:hover {background: rgba(255,255,255,0.2);color: #fff;text-decoration: none;}
+        ul.sidebar-nav {float: left; clear: both; position: relative}
+        ul.sidebar-nav li{color: #FFF; font-size: 16px}
+        ul.sub li {clear: both;font-size: 14px;line-height:30px; width: 200px}
+        a.top-menu {cursor: pointer}
+        a.top-menu:hover {background: rgba(255,255,255,0)}
+        a.top-menu strong {background: #fff; border-radius: 84px; color: #3C8F03; float: right; line-height: 10px; margin-top: 6px;padding: 6px; text-indent: 0;}
+        div.city {margin: 10px 35px}
+        div.city a {color: #FFF; float: left; clear: both}
+        div.city a:last-child {margin-top: 8px}
+        section {border-bottom: solid 1px rgba(168, 250, 170, 0.14); float: left; clear: both; padding-bottom: 20px;}
+        section:last-child {border-bottom: solid 1px transparent}
+        span.icon {background-size: 80% auto; margin-left: 12px; margin-top: 20px}
+    </style>
+    <body>
+        {% if not is_mobile %}
+        <div style="color: #FFF; font-size: 1.7em;height: 35px; background-color: #3C8F03; position: fixed;left: 0; top: 0; padding-top: 15px; width: 102%; z-index: 11">
+            <div style="background-size: 103% auto;height: 15px;margin-left: 10px;width: 1%" href="#menu-toggle" class="" id="menu-toggle"></div>
+            <div style=" text-align: center;width: 95%">CREOLINK COMMUNICATIONS</div>
+            <div style=" font-size: 14px;position: absolute; right: 50px; top: 10px">
+                <span style="padding: 0 20px">{{ member }}</span>
+                <a href="{% url 'logout' %}" class="icon" style="background-image: url('{% static "img/logout.png" %}');background-size: 80% auto; color: #fff; font-size: 14px"></a>
+                <a href="{% url 'logout' %}" style="color: #fff; font-size: 14px" >Deconnexion</a>
+            </div>
+
+        {% else %}
+            <div style="color: #FFF; font-size: 1em;height: 35px; background-color: #3C8F03; position: fixed;left: 0; top: 0; padding-top: 15px; width: 102%; z-index: 11">
+            <div style="background-size: 110% auto;margin-left: 5px;width: 1%" href="#menu-toggle" class="" id="menu-toggle"></div>
+            <div style="    margin-left: 15px; text-align: center;width: 95%">CREOLINK COMMUNICATIONS</div>
+            <div style="position: absolute; right: 10px; top: 14px;">
+                <a href="{% url 'device' %}" class="icon" style="background-image: url('{% static "img/network.png" %}');background-size: 80% auto;margin-right: 10px;
+"></a>
+                <a href="{% url 'logout' %}" class="icon" style="background-image: url('{% static "img/logout.png" %}');background-size: 80% auto"></a>
+            </div>
+        {% endif %}
+
+        </div>
+        <div id="wrapper">
+            <!-- Sidebar -->
+            <div id="sidebar-wrapper" style="z-index: 10;">
+                <div id="logo" style="float: left; height: 50px; width: 100%"></div>
+                <div class="filter" style="position: relative">
+                    <section>
+                        <ul class="sidebar-nav">
+                            <li class="sidebar-brand" style="text-indent: 2px">
+                                <span class="icon" style="background-image: url('{% static "img/draw-icon.png" %}')"></span>
+                                <a href="{% url 'live_drawer' %}">
+                                    Live Drawing
+                                </a>
+                            </li>
+                        </ul>
+                    </section>
+                    <h3 style="color: #fff; margin-left: 15px">Filter</h3>
+                    <section>
+                        <ul class="sidebar-nav">
+                            <li class="sidebar-brand" style="text-indent: 2px">
+                                <span class="icon" style="background-image: url('{% static "img/city-icon.png" %}')"></span>
+                                <a href="#"> City</a>
+                            </li>
+                        </ul>
+                        <div class="city">
+                            <a href="#" data-lat='4.056056' data-lng="9.777832">Douala</a>
+                            <a href="#"  data-lat='3.853293' data-lng="11.513672">Yaounde</a>
+                        </div>
+                    </section>
+                    <section>
+                        <ul class="sidebar-nav">
+                            <li class="sidebar-brand" style="text-indent: 2px">
+                                <span class="icon"  style="background-image: url('{% static "img/zone.png" %}')"></span>
+                                <a href="#">
+                                    Zone
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="zone">
+                            <label>
+                                <select class="form-control zone" style="clear: both;float: left;margin-left: 35px;width: 175px;">
+                                    <option value="">Selectionner</option>
+                                     {% for zone in zones %}
+                                        <option value="{{ zone.id }}">{{ zone.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+                        </div>
+                    </section>
+
+                    <section style="padding-bottom: 85px">
+                        <ul class="sidebar-nav">
+                            <li class="sidebar-brand" style="text-indent: 2px">
+                                <span class="icon"  style="background-image: url('{% static "img/network.png" %}')"></span>
+                                <a href="#">
+                                    Equipment type
+                                </a>
+                            </li>
+                            <div style="margin-left: 30px">
+                                <li>
+                                    <a href="#">All</a>
+                                </li>
+                                <li class="has-sub fibers">
+                                    {% if pending_fiber_count > 0 %}
+                                        <a class="top-menu" href="#"> <span>Optical fiber</span> <strong>{{ pending_fiber_count }}</strong></a>
+                                        <ul class="sub">
+                                            <li>
+                                                <a href="#" class="lnk"  data-requested="pending"><span>Pending</span>
+                                                    <div class="b-text">({{ pending_fiber_count }})</div>
+                                                </a>
+
+                                            </li>
+                                            <li>
+                                                <span><a href="#"  class="lnk"  data-requested="confirmed">Confirmed</a></span>
+                                            </li>
+                                        </ul>
+                                    {% else %}
+                                        <a class="top-menu lnk" href="#"  data-requested="all">Optical fiber</a>
+                                    {% endif %}
+                                </li>
+                                <li class="has-sub equipments">
+                                    {% if pending_device_count > 0 %}
+                                    <a class="top-menu" href="#"> <span>Equipments</span> <strong>{{ pending_device_count }}</strong></a>
+                                    <ul class="sub">
+                                        <li>
+                                            <a href="#" class="lnk"  data-requested="pending"><span>Pending</span>
+                                                <span class="b-text">({{ pending_device_count }})</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <span><a href="#" class="lnk"   data-requested="confirmed">Confirmed</a></span>
+                                        </li>
+                                    </ul>
+                                    {% else %}
+                                        <a class="top-menu lnk" href="#"  data-requested="all">Equipments</a>
+                                    {% endif %}
+                                </li>
+                            </div>
+                        </ul>
+                    </section>
+
+
+
+                </div>
+            </div>
+            <!-- /#sidebar-wrapper -->
+
+            <!-- Page Content -->
+            <div id="page-content-wrapper" style="padding: 0">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div id="map_canvas" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /#page-content-wrapper -->
+
+        </div>
+        <!-- /#wrapper -->
+
+        <!-- jQuery -->
+        <script src="{% static 'js/jquery-1.8.2.min.js' %}"></script>
+
+        <!-- Bootstrap Core JavaScript -->
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+        <!-- Menu Toggle Script -->
+        <script>
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+
+            (function() {
+                var markerCount = 0, map, city, zone;
+                ikwen.eventData = [];
+                ikwen.polylines = [];
+                ikwen.eventDataCount = 0;
+                ikwen.markerList = [];
+                ikwen.currentMarkerListOnTheMap = [];
+                var intervalId = null;
+                var currentDeviceId = '';
+                // load initial map options
+                var myLatlng = new google.maps.LatLng(3.80627, 11.50758);
+                var map_canvas = document.getElementById('page-content-wrapper');
+                var options = {
+                    center: myLatlng, zoom: 10,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                };
+                var fibers = {{ fibers | safe }};
+                initialize(options);
+                drawPoly(fibers)
+                var latitude, longitude, htmlText,iconImg;
+                {% for device in devices %}
+                    latitude = parseFloat("{{ device.latitude }}");
+                    longitude = parseFloat("{{ device.longitude }}");
+                    htmlText = ('<h4>' + "{{ device.name }}" + '</h4><p>' + "{{ device.description | safe }}" +"</p>");
+                    {% if device.category.icon %}
+                        iconImg = "{{ device.category.icon.url }}";
+                    {% endif %}
+                    addMarkerToMap(latitude, longitude, htmlText, iconImg);
+                {% endfor %}
+
+
+                function initialize(map_options) {
+                    map = new google.maps.Map(map_canvas, map_options);
+                }
+                function drawPoly(fibers){
+                    var polylines = constructPlolyCoords(fibers)
+                    setPoly(polylines)
+                }
+                function constructPlolyCoords(fibers){
+                    var fiberLineList = []
+                    for (var j=0; j<fibers.length; j++){
+                        var fiberLineCoord = []
+                        for (var k=0; k<fibers[j].length; k++){
+                            var pos = {};
+                            pos.lat = fibers[j][k].latitude
+                            pos.lng = fibers[j][k].longitude
+                            fiberLineCoord.push(pos);
+                        }
+                        fiberLineList.push(fiberLineCoord)
+                    }
+                    return fiberLineList
+                }
+                function setPoly(fiberLineList){
+                    var colors = []
+    {#                var fibers = {{ fibers | safe }}#}
+                    for (var j=0; j<fibers.length; j++){
+                        for (var k=0; k<fibers[j].length; k++){
+                            var color = fibers[j][0].color
+                        }
+                        colors.push(color);
+                    }
+
+                    for (var i = 0; i < fiberLineList.length; i++) {
+                        var pathStyle = new google.maps.Polyline({
+                            path: fiberLineList[i],
+                            geodesic: true,
+                            strokeColor: colors[i],
+                            strokeOpacity: 1.0,
+                            strokeWeight: 2,
+                            map: map,
+                            visible: true
+                        });
+                        pathStyle.setMap(map);
+                        ikwen.polylines.push(pathStyle)
+                    }
+                }
+                // set a marker to the map
+                function addMarkerToMap(lat, long, htmlMarkupForInfoWindow, iconImg){
+                    var infowindow = new google.maps.InfoWindow();
+                    var myLatLng = new google.maps.LatLng(lat, long);
+                    var marker = new google.maps.Marker({
+                        position: myLatLng,
+                        map: map,
+                        icon: iconImg,
+                        animation: google.maps.Animation.DROP
+                    });
+                    ikwen.currentMarkerListOnTheMap.push(marker);
+                    //Gives each marker an Id for the on click markerCount++;
+                    // Creates the event listener for clicking the marker
+                    // and places the marker on the map
+                    {% if not is_mobile %}
+                        google.maps.event.addListener(marker, 'mouseover', (function(marker, markerCount) {
+                    {% else %}
+                        google.maps.event.addListener(marker, 'click', (function(marker, markerCount) {
+                    {% endif %}
+
+                        return function() { infowindow.setContent(htmlMarkupForInfoWindow); infowindow.open(map, marker); }
+                     })(marker, markerCount));
+                    //Pans map to the new location of the marker
+                    map.panTo(myLatLng)
+                }
+
+                // set markers to invisible or remove every markers from the marker list
+                function unsetMarkers() {
+                    //Loop through all the markers and remove
+                    for (var i = 0; i < ikwen.currentMarkerListOnTheMap.length; i++) {
+                        ikwen.currentMarkerListOnTheMap[i].setMap(null);
+                    }
+                    ikwen.currentMarkerListOnTheMap = [];
+                }
+                function unsetPolylines() {
+                    for (i=0; i<ikwen.polylines.length; i++) {
+                      ikwen.polylines[i].setMap(null); //or line[i].setVisible(false);
+                    }
+                }
+
+                $('div.city a').click(function() {
+                    city = localStorage.setItem('city', $(this).data('cityId'))
+                    var lat = $(this).data('lat'), lng = $(this).data('lng');
+                    var myLatLng = new google.maps.LatLng(lat, lng);
+                    map.panTo(myLatLng)
+                })
+                $('div.zone select').change(function() {
+                    localStorage.setItem('zone', zone = $(this).val())
+{#                    var lat = $(this).data('lat'), lng = $(this).data('lng');#}
+{#                    var myLatLng = new google.maps.LatLng(lat, lng);#}
+{#                    map.panTo(myLatLng)#}
+                })
+
+                $('ul.sidebar-nav li.fibers a.lnk').click(function() {
+                    var equipmentType = "fiber"
+                    var status = $(this).data('requested')
+                    unsetPolylines()
+                    unsetMarkers()
+                    filterEquipments(equipmentType, status)
+                })
+                $('ul.sidebar-nav li.equipments a.lnk').click(function() {
+                    var equipmentType = "device"
+                    var status = $(this).data('requested')
+                    unsetPolylines()
+                    unsetMarkers()
+                    filterEquipments(equipmentType, status)
+                })
+                function filterEquipments(equipmentType, status) {
+                    var endpoint = "{% url 'filter_network_data' %}";
+                    var zone = localStorage.getItem('zone')
+                    var params = {format: 'json', equipmentType: equipmentType, cityId:city, zoneId: zone, status: status};
+                    $('body, button').css('cursor','wait');
+                    $.getJSON(endpoint, params, function(data) {
+                        $('body, button').css('cursor','default');
+                        if (data.error){
+                            $('div#top-notice-ctnr span').html(data.error).addClass('failure');
+                            $('#top-notice-ctnr').fadeIn().delay(5000);
+                        } else {
+                            var myLatlng = new google.maps.LatLng(3.80627, 11.50758);
+                                var options = {
+                                    center: myLatlng, zoom: 10,
+                                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                                }
+                            if (equipmentType == "fiber"){
+                                // draw polyline with the revovered coords
+                                var lineCoords = data.lines
+                                drawPoly(lineCoords)
+                            } else {
+                                // positionning recovered devices on the map
+                                var devices = data
+                                for (var i=0; i<=devices.length-1; i++){
+                                    latitude = parseFloat(devices[i].latitude);
+                                    longitude = parseFloat(devices[i].longitude)
+                                    htmlText = ('<h4>' + devices[i].name  + '</h4><p>' + devices[i].description  +"</p>");
+                                    if (devices[i].category.icon) {
+                                        iconImg =  "{{ media_root }}" + devices[i].category.icon
+                                    }
+                                    addMarkerToMap(latitude, longitude, htmlText, iconImg);
+                                }
+                            }
+                        }
+                    });
+                    return false
+                }
+                var height = $(document).height() - 50;
+                $('#page-content-wrapper').css({'height': height, 'marginTop':50});
+                $('#side-bar').css({'height': height});
+                $('ul.sidebar-nav li.has-sub').click(function() {
+                    $(this).find('.sub').fadeToggle()
+                });
+            })()
+        </script>
+    </body>
+</html>

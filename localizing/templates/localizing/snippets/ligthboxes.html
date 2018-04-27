@@ -1,0 +1,62 @@
+{% load i18n staticfiles %}
+ <div id="lightbox" class="ik-hdn">
+{#    <div id="close">X</div>#}
+    <div class="wrapper">
+        <div class="dialog has-shade new-coordinate ik-hdn" style="width: 30%;">
+            <header style="font-size: 12px; font-weight: 700; padding: 10px;color: #222;">{% trans "New coordinates" %}</header>
+            <div class="stage" style="padding: 10px 10px 6px">
+                <input id='latlongclicked' type="text" placeholder="Latitude;Longitude" style="border-radius: 2px;color:#343943; font-size: 12px; padding:4px 10px;width: 93%;">
+                <div class='controls' style="float: right; padding-top: 5px; width: 100%">
+                    <button class="btn validate btn-success btn-sm" style="font-weight: 700; font-size: 12px;float: right">Submit</button>
+                    <button class="btn btn-sm cancel btn-default"  style="font-weight: 700; font-size: 12px;float: right; margin-right: 20px">Cancel</button>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div class="dialog has-shade new-device ik-hdn" style="margin-top: 5%;width: 500px;">
+            <header style="font-size: 12px; font-weight: 700; padding: 10px;color: #111;">{% trans "Add a new device" %}</header>
+            <div class="stage" style="padding: 10px 10px 6px">
+                <form role="form" id="equipment" style="margin-bottom: 10px;clear: both">{% csrf_token %}
+                    <input type="hidden" class="form-control longitude" name="longitude" >
+                    <input type="hidden" class="form-control latitude" name="latitude">
+                    <input type="hidden" class="form-control origin" name="origin">
+                    <input type="hidden" name="name" value="">
+                    <div class="form-group">
+                        <label for="type" style="font-size: 12px; font-weight: 700;">Type</label>
+                        <select class="form-control category" name="category" style="font-size: 12px;">
+                            <option value="">Select a type</option>
+                            {% for device in device_categories %}
+                                <option value="{{ device.id }}">{{ device.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="client">
+                        <div class="form-group input-group">
+                            <label for="" style="font-size: 12px; font-weight: 700;">Client code</label>
+                            <input type="text" class="client_code" name="client_code">
+                        </div>
+                        <div class="form-group input-group">
+                            <label for="" style="font-size: 12px; font-weight: 700;">Client name</label>
+                            <input type="text" class="client_name" name="client_name">
+                        </div>
+                        <div class="form-group input-group">
+                            <label for="" style="font-size: 12px; font-weight: 700;">Site code</label>
+                            <input type="text" class="site_code" name="site_code">
+                        </div>
+
+                    </div>
+
+                    <div class="form-group" style="clear: both;float: left;margin-top: 22px;width: 100%;">
+                        <label for="type" style="font-weight: 700;font-size: 12px">Description</label>
+                        <textarea rows="4" class="desc" name="description" cols="5" style="font-size: 12px; resize: none;width: 445px"></textarea>
+                    </div>
+                    <div class="form-group" style="clear: both">
+                        <button type="submit" id="save-device" class="btn btn-success btn-sm" style="font-weight: 700; font-size: 12px;float: right">Submit</button>
+                        <button type="button" class="btn btn-sm cancel btn-default"  style="font-weight: 700; font-size: 12px;float: right; margin-right: 20px">Cancel</button>
+                    </div>
+                </form>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </div>
+</div>

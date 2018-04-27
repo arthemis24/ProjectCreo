@@ -1,0 +1,1005 @@
+{% load i18n %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}?version=3.1">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}?version=3.1">
+        <title>CREOLINK - Equipements</title>
+
+        <!-- Bootstrap Core CSS -->
+        <script src="{% static 'js/jquery-1.8.2.min.js' %}"></script>
+        <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+        <script src="{% static 'js/ikwen-util.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/jquery-ui-1.8.21.custom.min.js' %}"></script>
+        <script type="text/javascript" src="https://maps.google.com/maps/api/js?key=AIzaSyBD5bSEUzqMvAeOCnEctZ52G1Qt-tFUP-s&sensor=true"></script>
+        <!-- Include Required Prerequisites -->
+{#        <script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>#}
+        <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+{#        <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.css" />#}
+
+        <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+        <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    <style>
+        h5 {color: #FFF; font-size: 13px}
+        .sidebar-nav > .sidebar-brand {font-size: 14px}
+        #menu-toggle {background-image: url('{% static 'img/menu-icon.png' %}');background-size: 100% 40px; padding: 20px; margin-top: -15px; position: fixed; z-index: 20}#}
+        .b-text{background-color: #FFF;border-radius: 33px; color: #3c8f03; float: right;line-height:20px;margin-top: 5px;text-indent: 0;padding: 0 8px;}
+        .sidebar-nav > .sidebar-brand { height: inherit; clear: both}
+        ul.sidebar-nav {float: left; clear: both; position: relative}
+        ul.sidebar-nav li{color: #FFF; font-size: 13px}
+        a.top-menu {cursor: pointer}
+        .sidebar-nav li {line-height: 20px;}
+        a.top-menu:hover {background: rgba(255,255,255,0)}
+        .sidebar-nav li a.active {background: rgba(255,255,255,0.2);}
+        a.top-menu strong {background: #fff; border-radius: 84px; color: #3C8F03; float: right; line-height: 10px; margin-top: 6px;padding: 6px; text-indent: 0;}
+        div.city {margin: 10px 35px}
+        div.city a {color: #FFF; float: left; clear: both}
+        div.city a:last-child {margin-top: 8px}
+        section {border-bottom: solid 1px rgba(168, 250, 170, 0.14); float: left; clear: both; padding-bottom: 20px;}
+        section:last-child {border-bottom: solid 1px transparent}
+        span.icon {background-size: 80% auto; margin-left: 12px; margin-top: 20px}
+        form#search {margin: auto; margin-top: -5px; width: 55%}
+         #suggestions-for-view {border: 1px solid #ddd; border-top: none; background-color: #FFF; position: absolute; height: 485px;  width: 39.4%}
+         #suggestions-for-view section {clear: both; float: left; height: 156px; border-bottom: solid 1px #ddd; overflow: auto; padding: 2px 2% 3px 2%; width: 96%}
+         #suggestions-for-view section div.more {background: #f6f6f6; color: #444; clear: both; float: left; font-size: 13px; height: 21px; margin-top: 132px; margin-left: -2%; padding: 3px 0; position: absolute; text-align: center; width: 100%}
+         #suggestions-for-view section header {color: #333; float: left; font-size: 16px; font-weight: 400; margin-top: 4px}
+        #keyword {float: left;width: 70%}
+        div.result {float: left; width: 100%}
+        div.result ul {float: left; margin-left: 2%; margin-top: 2px; width: 98%}
+        div.result ul li {font-size: 14px}
+        div.result ul li a {float: left; padding: 5px 0; text-decoration: none; text-transform: capitalize; width: 100%}
+        div.close {font-size: 17px; padding: 12px; position: absolute}
+        div.empty-grid {color: #888; font-size: 14px}
+        .daterangepicker .input-mini {width: 75%}
+        .daterangepicker.ltr .calendar.right .calendar-table {margin-left: 60px}
+        .daterangepicker select.hourselect, .daterangepicker select.minuteselect, .daterangepicker select.secondselect, .daterangepicker select.ampmselect {width: 65px}
+        .radio, .checkbox {color: #fff;font-weight: 300;font-size: 13px;}
+        .radio input[type="radio"], .radio-inline input[type="radio"], .checkbox input[type="checkbox"], .checkbox-inline input[type="checkbox"] {height: 16px; margin-top: 2px;width: 16px;}
+        div.tooltip-html-text {}
+        div.tooltip-html-text .photo {background-position: center; background-repeat: no-repeat; background-size: 100% auto; position: absolute; height: 150px;margin-left: -22px;  width: 250px}
+        div.tooltip-html-text .desc {float: left; clear: both; margin-left: 15px}
+        div.tooltip-html-text .desc h4 {text-align: center; width: 194px;}
+        div.tooltip-html-text p {float: left; clear: both}
+        div.tooltip-html-text ul {float: left; margin-top: 160px; clear: both}
+        div.tooltip-html-text ul li {float: left; clear: both}
+        #close {color: #666; cursor: default; font-size: 30px; font-weight: 700; position: absolute; right: 30px; top:30px; }
+        #close:hover {color: #FFF}
+        .loading-progress {background: rgba(255, 255, 255, .9); height: 100%; position: absolute;
+            top: 0; left: 0; width: 100%; z-index: 100;}
+    </style>
+    <body>
+        {% if not is_mobile %}
+        <div style="color: #FFF; font-size: 1.7em;height: 35px; background-color: #3C8F03; position: fixed;left: 0; top: 0; padding-top: 15px; width: 102%; z-index: 11">
+            <div style="background-size: 103% auto;height: 15px;margin-left: 10px;width: 1%" href="#menu-toggle" class="" id="menu-toggle"></div>
+            <form role="form" id="search" style="">
+                 <div class="form-group" style="margin-bottom: 0">
+                     <input type="text" id="keyword" style="height: 20px;">
+                     <input type="hidden">
+                     <div id="suggestions-for-view" style="display:none; margin-top: 30px">
+                         <div class="close" style="padding: 5px 12px; margin-left: 515px"> X </div>
+                         <section class="techies">
+                             <header>Techies</header>
+
+{#                             <div class="more"> + 152 others</div>#}
+                             <div class="more"></div>
+                             <div class="result">
+                                 <ul class="techie">
+                                     <li class="hidden choosen"><a href="#" data-type="techie" data-key="1"></a></li>
+                                     <li class="line tpl"><a href="#" data-techname="" data-type="techie" data-key="1"></a></li>
+                                 </ul>
+                             </div>
+                         </section>
+                         <section class="fibers">
+                             <header>Fibers</header>
+                             <div class="more"></div>
+{#                             <div class="more"> + 55 others</div>#}
+                             <div class="result">
+                                 <ul class="fiber">
+                                     <li class="hidden choosen"><a href="#" data-type="fiber" data-key=""></a></li>
+                                     <li class="line tpl"><a href="#" data-type="techie" data-key="1"></a></li>
+                                 </ul>
+                            </div>
+                         </section>
+                         <section class="devices">
+                             <header>Devices</header>
+
+{#                             <div class="more"> + 585 others</div>#}
+                             <div class="more"></div>
+                             <div class="result">
+                                 <ul class="device">
+                                     <li class="hidden choosen"><a href="#" data-type="device" data-key=""></a></li>
+                                     <li class="line tpl"><a href="#" data-type="" data-key="1"></a></li>
+                                 </ul>
+                             </div>
+                         </section>
+                     </div>
+
+                 </div>
+            </form>
+            <div style=" font-size: 14px;position: absolute; right: 50px; top: 10px">
+                <span style="padding: 0 20px">{{ member }}</span>
+                <a href="{% url 'logout' %}" class="icon" style="background-image: url('{% static "img/logout.png" %}');background-size: 80% auto; color: #fff; font-size: 14px"></a>
+                <a href="{% url 'logout' %}" style="color: #fff; font-size: 14px" >Deconnexion</a>
+            </div>
+
+        {% else %}
+            <div style="color: #FFF; font-size: 1em;height: 35px; background-color: #3C8F03; position: fixed;left: 0; top: 0; padding-top: 15px; width: 102%; z-index: 11">
+            <div style="background-size: 110% auto;margin-left: 5px;width: 1%" href="#menu-toggle" class="" id="menu-toggle"></div>
+            <div style="    margin-left: 15px; text-align: center;width: 95%">CREOLINK COMMUNICATIONS</div>
+            <div style="position: absolute; right: 10px; top: 14px;">
+                <a href="{% url 'device' %}" class="icon" style="background-image: url('{% static "img/network.png" %}');background-size: 80% auto;margin-right: 10px;
+"></a>
+                <a href="{% url 'logout' %}" class="icon" style="background-image: url('{% static "img/logout.png" %}');background-size: 80% auto"></a>
+            </div>
+        {% endif %}
+
+
+        </div>
+        <div id="wrapper">
+            <!-- Sidebar -->
+            <div id="sidebar-wrapper" style="z-index: 10;">
+                <div id="logo" style="float: left; height: 50px; width: 100%"></div>
+                <div class="filter" style="position: relative">
+                    <section>
+                        <ul class="sidebar-nav">
+                            <li id="watch-coord" class="sidebar-brand" style="line-height: 15px;text-indent: 0;">
+                                <span class="icon" style="background-image: url('{% static "img/locate.png" %}');background-size: 60%; margin-top: 10px;"></span>
+{#                                <span id="latlongclicked"></span>#}
+                                <div style="float: left; font-size: 12px;margin-top: 6px;">
+                                    <div>
+                                        <span>Lat: </span>
+                                        <span id="latspan" style="float: left;overflow: hidden;width: 140px;"> 412255555555544444444ddfdg</span>
+                                    </div>
+                                    <div style="clear: both;">
+                                        <span>Lng: </span>
+                                        <span id="lngspan" style="float: left;overflow: hidden;width: 140px;"> 45122125558885556666dfdgffdgdf</span>
+                                    </div>
+                                </div>
+                                <span id='add-coords' class="icon" style="background-image: url('{% static "img/white-plus-md.png" %}'); cursor: pointer; margin-top: 10px;"></span>
+{#                                <span id="latlong"></span>#}
+
+                            </li>
+
+                            <li id="upgrade" class="sidebar-brand" style="height: 30px; text-indent: 2px">
+                                <span class="icon" style="background-image: url('{% static "img/play.png" %}')"></span>
+                                <a href="{% url 'network' %}">
+                                    Version 2.0
+                                </a>
+                            </li>
+                            <li id="clear-map" class="sidebar-brand" style="height: 45px; text-indent: 2px">
+                                <span class="icon" style="background-image: url('{% static "img/erase.png" %}')"></span>
+                                <a href="#">
+                                    Clear Map
+                                </a>
+                            </li>
+                            <li class="sidebar-brand" style=" text-indent: 2px">
+                                <span class="icon" style="background-image: url('{% static "img/draw-icon.png" %}')"></span>
+                                <a href="{% url 'live_drawer' %}">
+                                    Live Drawing
+                                </a>
+                            </li>
+                        </ul>
+                    </section>
+                    <h3 style="color: #fff; font-weight: 400;font-size: 19px; margin-left: 15px; padding-top: 20px; clear: both;">Filter</h3>
+                    <div id="techie-name" class="hidden" data-techieid=""  style="color: #fff;font-size: 15px;margin-left: 20px;">
+                        <span></span>
+                        <span id="cancel-techie" title="Cancel" style="cursor: default; float: right; font-weight: 700; margin-right: 12px;">X</span>
+                    </div>
+
+                    <section id="city" style="border-bottom: transparent; padding-bottom: 5px">
+                        <ul class="sidebar-nav">
+                            <li class="sidebar-brand" style="text-indent: 2px">
+                                <span class="icon"  style="background-image: url('{% static "img/icon-calendar.png" %}')"></span>
+                                <a href="#"data-status="city" class="date-picker criterion">
+                                     Date filter
+                                </a>
+                            </li>
+
+                            <li class="date-picker" style="margin-left: 25px">
+                                 <input type="text" placeholder="Au" name="datefilter" id="daterange"  value=""  style="height: 25px;margin-left: -29px; width: 195px;">
+                            </li>
+                        </ul>
+                    </section>
+                    <section id="city" style="border-bottom: transparent; padding-bottom: 5px">
+                        <ul class="sidebar-nav">
+                            <li class="sidebar-brand" style="text-indent: 2px">
+                                <span class="icon"  style="background-image: url('{% static "img/city-icon.png" %}')"></span>
+                                <a href="#"data-status="city" class="city criterion">
+                                     City
+                                </a>
+                            </li>
+                            {% for city in cities %}
+                            <li class="city" style="margin-left: 25px">
+                                 <a href="#" class="criterion"  data-lat='{{ city.latitude }}' data-lng="{{ city.longitude }}">
+                                     {{ city.name }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </section>
+                    <section id='fiber' style="border-bottom: transparent;padding-bottom: 5px">
+                        <ul class="sidebar-nav">
+                            <li class="sidebar-brand" style="text-indent: 2px">
+                                <span class="icon"  style="background-image: url('{% static "img/network.png" %}')"></span>
+                                <a href="#" style="margin-left: 17px">
+                                    Fibers
+                                </a>
+                            </li>
+                            <div style="margin-left: 30px">
+                                <div class="status">
+                                    <h5>By status</h5>
+                                    <label class="checkbox"><input type="checkbox" checked  data-status="Pending" class="criterion fiberstatus" value="Pending">Pending</label>
+                                    <label class="checkbox"><input type="checkbox" checked  data-status="Validate" class="criterion fiberstatus"  value="Validate">Confirmed</label>
+                                </div>
+                                <div class="type" style="margin-top: 20px;">
+                                    <h5>By type</h5>
+                                        {% for type in fiber_types %}
+{#                                            <li><a data-typeId="{{ type.id }}" class="criterion" href="#">{{ type.name }}</a></li>#}
+                                            <label class="checkbox">
+                                                <input type="checkbox" checked data-typeId="{{ type.id }}" class="criterion fibertype"  value="{{ type.id }}">{{ type.name }}
+                                            </label>
+                                        {% endfor %}
+                                </div>
+                            </div>
+                        </ul>
+                    </section>
+                    <section id="device" style="padding-bottom: 85px">
+                        <ul class="sidebar-nav">
+                            <li class="sidebar-brand" style="text-indent: 2px">
+                                <span class="icon"  style="background-image: url('{% static "img/network.png" %}')"></span>
+                                <a href="#" style="margin-left: 17px">
+                                    Devices
+                                </a>
+                            </li>
+                            <div style="margin-left: 30px">
+                                <div>
+                                    <div class="status">
+                                        <h5>By status</h5>
+                                        <label class="checkbox"><input type="checkbox" checked data-status="Pending" class="criterion devicestatus" value="Pending">Pending</label>
+                                        <label class="checkbox"><input type="checkbox" checked data-status="Validate" class="criterion devicestatus"  value="Validate">Confirmed</label>
+                                    </div>
+                                    <div class="category" style="margin-top: 20px;">
+                                        <h5>By Category</h5>
+                                            {% for category in categories %}
+                                                <label class="checkbox">
+                                                    <input data-categoryid="{{ category.id }}" checked type="checkbox" class="criterion devicecategory" value="{{ category.id }}">{{ category.name }}
+                                                </label>
+                                            {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </ul>
+                    </section>
+                </div>
+            </div>
+            <!-- /#sidebar-wrapper -->
+
+            <!-- Page Content -->
+            <div id="page-content-wrapper" style="padding: 0">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div id="map_canvas" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="lightbox" class="hidden">
+            <div id="close">X</div>
+            <div class="wrapper">
+                <div class="dialog has-shade new-coordinate hidden" style="width: 30%;">
+                    <header style="font-size: 1.3em;border-bottom: solid 1px #CCC;padding: 10px;color: #3D3C44;">{% trans "New coordinates" %}</header>
+                    <div class="stage" style="padding: 10px 10px 6px">
+                        <input id='latlongclicked' type="text" placeholder="Latitude;Longitude" style="border-radius: 2px;color:#343943; font-size: 1.2em; padding: 10px;width: 93%;">
+                        <div class='controls' style="border-top: solid 1px #C7FCD4; float: right; margin-top: 15px; padding-top: 5px; width: 100%">
+                            <button class="btn validate" style="background: #3C8F03; border-radius: 2px; color: #fff; float: right; padding: 8px 50px;">OK</button>
+                            <button class="btn cancel" style="border-radius: 2px; color: #000; float: right;margin-right: 20px; padding: 8px 40px;">Cancel</button>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+                <div class="dialog has-shade new-device hidden" style="margin-top: 5%;width: 20%;">
+                    <header style="font-size: 1.3em;border-bottom: solid 1px #CCC;padding: 10px;color: #3D3C44;">{% trans "New item" %}</header>
+                    <div class="stage" style="padding: 10px 10px 6px">
+                        <form role="form" id="equipment" style="margin-bottom: 10px;clear: both" method="post" action="{% url 'save_device_position' %}"  enctype="multipart/form-data">{% csrf_token %}
+                            <input type="hidden" class="form-control longitude" name="longitude" >
+                            <input type="hidden" class="form-control latitude" name="latitude">
+                            <input type="hidden" class="form-control origin" name="origin">
+                            <input type="hidden" name="name" value="">
+                            <div class="form-group">
+                                <label for="type">Type</label>
+                                <select class="form-control category" name="category">
+                                    <option value="">Select a type</option>
+                                    {% for device in device_categories %}
+                                        <option value="{{ device.id }}">{{ device.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group input-group">
+                                <label for="">
+                                Photo
+                                <input type="file" style=" border-radius: 7px; width: 75%" name="photo">
+                                </label>
+                            </div>
+
+                            <div class="form-group" style="clear: both;float: left;margin-top: 22px;width: 100%;">
+                                <label for="type">Description</label>
+                                <textarea rows="4" class="desc" name="description"></textarea>
+                            </div>
+                            <div class="form-group" style="clear: both">
+                                <button type="button" class="btn btn-secondary btn-sm cancel btn-block">Cancel</button>
+                                <button type="submit" class="btn btn-secondary btn-sm btn-block" style="background: #3C8F03; color: #FFF">Submit</button>
+                            </div>
+                        </form>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="loading-progress">
+            <div style="margin: 20% auto; width: 60%">
+                <p style="text-align: center">
+                    Loading. Please wait ...
+                    <strong class="progress-rate" style="color: #003192">0%</strong>
+                </p>
+            </div>
+        </div>
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+        <!-- Menu Toggle Script -->
+        <script>
+            $("#menu-toggle").click(function(e) {
+                e.preventDefault();
+                $("#wrapper").toggleClass("toggled");
+            });
+
+            (function() {
+                var markerCount = 0, map, city, zone, fiberStatus, fiberType, deviceStatus, deviceCategory, searchVal ='', string_date='';
+                ikwen.eventData = [];
+                ikwen.polylines = [];
+                ikwen.eventDataCount = 0;
+                ikwen.markerList = [];
+                ikwen.currentMarkerListOnTheMap = [];
+
+                // load initial map options
+                var myLatlng = new google.maps.LatLng(3.8879017, 11.5348783);
+                var map_canvas = document.getElementById('page-content-wrapper');
+                var options = {
+                    center: myLatlng, zoom: 13,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                };
+                var fibers = {{ fibers | safe }};
+                initialize(options);
+                drawPoly(fibers);
+                var latitude, longitude, deviceId, htmlText,iconImg;
+                {% for device in devices %}
+                    latitude = parseFloat("{{ device.latitude }}");
+                    longitude = parseFloat("{{ device.longitude }}");
+                    deviceId = "{{ device.id }}";
+                    var photo = "{% static 'img/no_photo.png' %}"
+                    {% if device.photo %}
+                        photo = "{{ device.photo.url | safe }}"
+                    {% endif %}
+                    htmlText = ("<div class=\"tooltip-html-text\">" +
+                    "<div class='desc'>" +
+                    "<h4> {{ device.name }} </h4>" +
+                    "<div  class='photo' style=\"background-image: url(" + photo + ")\"> </div>" +
+                    "</div>" +
+                            "<ul><li><b> Categorie: </b>"+ "{{ device.category.name }}" + "</li>" +
+                            "<li><b> Created on: </b>"+ "{{ device.get_display_date}}" + "</li>" +
+                            "<li><b> Techie: </b>"+ "{{ device.get_techie_name }}" + "</li></ul>" +
+                    "</div>");
+
+                    {% if device.category.icon.name %}
+                        iconImg = "{{ device.category.icon.url}}";
+                    {% endif %}
+                    addMarkerToMap(latitude, longitude, deviceId, htmlText, iconImg);
+                {% endfor %}
+
+                var i, blocksLoaded = 0,
+                    fiberBlocks = {{ fiber_blocks }},
+                    deviceBlocks = {{ device_blocks }},
+                    totalBlocks = fiberBlocks + deviceBlocks;
+                for (i=0; i<fiberBlocks; i++) {
+                    $.getJSON('{% url 'grab_fibers' %}', {start: i * 50}, function(data) {
+                        drawPoly(data);
+                        notifyLoadFinished();
+                    });
+                }
+
+                for (i=0; i<deviceBlocks; i++) {
+                    $.getJSON('{% url 'grab_devices' %}', {start: i * 50}, function(data) {
+                        var d;
+                        for (var j=0; j<data.length; j++) {
+                            d = data[j];
+                            addMarkerToMap(d.lat, d.lng, d.id, d.html, d.icon);
+                        }
+                        notifyLoadFinished();
+                    });
+                }
+
+                function notifyLoadFinished() {
+                    blocksLoaded++;
+                    var rate = Math.round(blocksLoaded / totalBlocks * 100) + '%';
+                    $('.progress-rate').text(rate);
+                    if (blocksLoaded >= totalBlocks) {
+                        $('.loading-progress').hide();
+                    }
+                }
+
+                function initialize(map_options) {
+                    map = new google.maps.Map(map_canvas, map_options);
+                    google.maps.event.addListener(map,'dblclick',function(event) {
+                        var lat = event.latLng.lat() , lng = event.latLng.lng()
+                        addMarkerToMap(lat, lng, '', 'New device', "{% static 'img/grey_pin.png' %}");
+                        document.getElementById('latlongclicked').value = lat + ';' + lng
+                        $('form#equipment input.latitude').val(lat)
+                        $('form#equipment input.longitude').val(lng)
+                        $('form#equipment input.origin').val('home')
+                        setnewdevice()
+                    })
+
+                    google.maps.event.addListener(map,'mousemove',function(event) {
+                        document.getElementById('latspan').innerHTML = event.latLng.lat()
+                        document.getElementById('lngspan').innerHTML = event.latLng.lng()
+{#                        document.getElementById('latlong').innerHTML = event.latLng.lat() + '|' + event.latLng.lng()#}
+                    });
+                }
+                function drawPoly(fibers){
+                    var polylines = constructPlolyCoords(fibers)
+                    setPoly(polylines)
+                }
+                function constructPlolyCoords(fibers){
+                    var fiberLineList = []
+                    for (var j=0; j<fibers.length; j++){
+                        var fiberLineCoord = []
+                        for (var k=0; k<fibers[j].length; k++){
+                            var pos = {};
+                            pos.lat = parseFloat(fibers[j][k].latitude)
+                            pos.lng = parseFloat(fibers[j][k].longitude)
+                            fiberLineCoord.push(pos);
+                        }
+                        fiberLineList.push(fiberLineCoord)
+                    }
+                    return fiberLineList
+                }
+                function setPoly(fiberLineList){
+                    var colors = []
+    {#                var fibers = {{ fibers | safe }}#}
+                    for (var j=0; j<fibers.length; j++){
+                        for (var k=0; k<fibers[j].length; k++){
+                            var color = fibers[j][0].color
+                        }
+                        colors.push(color);
+                    }
+
+                    for (var i = 0; i < fiberLineList.length; i++) {
+                        var pathStyle = new google.maps.Polyline({
+                            path: fiberLineList[i],
+                            geodesic: true,
+                            strokeColor: colors[i],
+                            strokeOpacity: 1.0,
+                            strokeWeight: 3,
+                            map: map,
+                            visible: true
+                        });
+                        pathStyle.setMap(map);
+                        ikwen.polylines.push(pathStyle)
+                    }
+                }
+                // set a marker to the map
+                function addMarkerToMap(lat, long, deviceId, htmlMarkupForInfoWindow, iconImg){
+                    var infowindow = new google.maps.InfoWindow();
+                    var myLatLng = new google.maps.LatLng(lat, long);
+                    var marker = new google.maps.Marker({
+                        position: myLatLng,
+                        map: map,
+                        icon: iconImg,
+                        animation: google.maps.Animation.DROP,
+                        deviceId: deviceId,
+                        {% if not is_mobile %}
+                            draggable:true,
+                        {% else %}
+                            draggable:false,
+                        {% endif %}
+
+                    });
+                    ikwen.currentMarkerListOnTheMap.push(marker);
+                    //Gives each marker an Id for the on click markerCount++;
+                    // Creates the event listener for clicking the marker
+                    // and places the marker on the map
+                    google.maps.event.addListener(marker,'dragend',function(event) {
+                        if (confirm("do you confirm the new position?")){
+                            changeDevicePosition(deviceId, event.latLng.lat(), event.latLng.lng())
+                        }
+                     });
+                    {% if not is_mobile %}
+                        google.maps.event.addListener(marker, 'mouseover', (function(marker, markerCount)
+                    {% else %}
+                        google.maps.event.addListener(marker, 'click', (function(marker, markerCount)
+                    {% endif %}
+                    {
+                        return function() {
+                            $('.gm-style-iw').parent().hide()
+                            infowindow.setContent(htmlMarkupForInfoWindow); infowindow.open(map, marker); }
+                    })(marker, markerCount));
+                    //Pans map to the new location of the marker
+{#                    map.panTo(myLatLng)#}
+                }
+
+                // set markers to invisible or remove every markers from the marker list
+                function unsetMarkers() {
+                    //Loop through all the markers and remove
+                    for (var i = 0; i < ikwen.currentMarkerListOnTheMap.length; i++) {
+                        ikwen.currentMarkerListOnTheMap[i].setMap(null);
+                    }
+                    ikwen.currentMarkerListOnTheMap = [];
+                }
+                function unsetPolylines() {
+                    for (i=0; i<ikwen.polylines.length; i++) {
+                      ikwen.polylines[i].setMap(null); //or line[i].setVisible(false);
+                    }
+                }
+
+                $('section#city li.city a').click(function() {
+                    $('section#city li.city a').removeClass('active')
+                    $(this).addClass('active')
+                    var lat = $(this).data('lat'), lng = $(this).data('lng');
+                    var myLatLng = new google.maps.LatLng(lat, lng);
+                    map.panTo(myLatLng)
+                })
+                $('div.zone select').change(function() {
+{#                    var lat = $(this).data('lat'), lng = $(this).data('lng');#}
+{#                    var myLatLng = new google.maps.LatLng(lat, lng);#}
+{#                    map.panTo(myLatLng)#}
+                })
+                $('input#daterange').change(function(){
+                    alert('do this')
+                })
+                $('section label.checkbox input').click(function(e) {
+                    unsetPolylines()
+                    unsetMarkers()
+                    var filterParams = getSelectedCriteria()
+                    filterEquipments(filterParams)
+                    e.stopPropagation()
+                })
+                function getSelectedCriteria(){
+                    fiberStatus = ''
+                    fiberType = ''
+                    deviceCategory = ''
+                    deviceStatus = ''
+                    $('section label.checkbox').find('input:checkbox:checked').each(function() {
+                        if ($(this).hasClass('fiberstatus')) fiberStatus += ($(this).val() + ',')
+                        if ($(this).hasClass('fibertype')) fiberType += ($(this).val() + ',')
+                        if ($(this).hasClass('devicecategory')) deviceCategory += ($(this).val() + ',')
+                        if ($(this).hasClass('devicestatus')) deviceStatus += ($(this).val() + ',')
+
+                    })
+                    return {
+                        fiberStatus: fiberStatus,
+                        fiberType: fiberType,
+                        deviceCategory: deviceCategory,
+                        deviceStatus: deviceStatus
+                    }
+                }
+                function filterEquipments(params) {
+                    var endpoint = "{% url 'filter_network_data' %}";
+                    var techieId = $('#techie-name').data('techieid')
+                    params.format ='json';
+                    params.techieId = techieId;
+                    params.string_date = string_date;
+
+                    $('body, button').css('cursor','wait');
+                    $.getJSON(endpoint, params, function(data) {
+                        $('body, button').css('cursor','default');
+                        if (data.error){
+                            $('div#top-notice-ctnr span').html(data.error).addClass('failure');
+                            $('#top-notice-ctnr').fadeIn().delay(5000);
+                        } else {
+                            var myLatlng = new google.maps.LatLng(3.80627, 11.50758);
+                                var options = {
+                                    center: myLatlng, zoom: 10,
+                                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                                }
+{#                            if (equipmentType == "fiber"){#}
+                                // draw polyline with the revovered coords
+                                var lineCoords = data.lines
+                                drawPoly(lineCoords)
+{#                            } else {#}
+                                // positionning recovered devices on the map
+                                var devices = data.devices
+                                for (var i=0; i<=devices.length-1; i++){
+                                    latitude = parseFloat(devices[i].latitude);
+                                    longitude = parseFloat(devices[i].longitude)
+                                    deviceId = devices[i].id
+{#                                    htmlText = ('<h4>' + devices[i].name  + '</h4><p>' + devices[i].description  +"</p>");#}
+                                    if (devices[i].image)    photo = devices[i].image
+                                    else  photo = "{% static 'img/no_photo.png' %}"
+                                    htmlText = ('<div class="tooltip-html-text">' +
+                                    "<div class='desc'>" +
+                                    "<h4>" + devices[i].name + '</h4>' +
+                                     "<div  class='photo' style=\"background-image: url(" + photo + ")\"> </div>" +
+                                    "</div>" +
+                                    "<ul><li><b> Categorie: </b>"+ devices[i].category.name + "</li>" +
+                                        "<li><b> Created on: </b>"+ devices[i].display_date + "</li>" +
+                                        "<li><b> Techie: </b>"+ devices[i].display_techie_name + "</li></ul>" +
+                                    "</div>");
+
+                                    if (devices[i].category.icon) {
+                                        iconImg =  "{{ media_root }}" + devices[i].category.icon
+                                    }
+                                    addMarkerToMap(latitude, longitude, deviceId, htmlText, iconImg);
+                                }
+{#                            }#}
+                        }
+                    });
+                    return false
+                }
+                var height = $(document).height() - 50;
+                $('#page-content-wrapper').css({'height': height, 'marginTop':50});
+                $('#side-bar').css({'height': height});
+
+
+
+
+                // handle search
+                $('form#search #keyword').keyup(function(){
+                    var query = $(this).val()
+                    if (query.length < 2) return
+                    var endpoint = "{% url 'search' %}";
+                    var params = {format: 'json', query: query};
+                    $('body, button').css('cursor','wait');
+                    $.getJSON(endpoint, params, function(data) {
+                        $('body, button').css('cursor','default');
+                        if (data.error){
+                            $('div#top-notice-ctnr span').html(data.error).addClass('failure');
+                            $('#top-notice-ctnr').fadeIn().delay(5000);
+                        } else {
+                            $('.empty-grid').remove()
+                            var fibers = data.lines
+                            var devices = data.devices
+                            var techies = data.techies
+                            if (fibers.length>0 || devices.length>0 || techies.length>0) $('#suggestions-for-view').fadeIn()
+                            populateFibers(fibers)
+                            populateDevices(devices)
+                            populateTechies(techies)
+                        }
+                    });
+                    return false
+                })
+                $('form#search div.result li').live('click', function(){
+                    var equipmentType = $(this).find('a').data('type')
+                    var pKey = $(this).find('a').data('key')
+                    var name = $(this).find('a').text()
+
+                    if (equipmentType == 'device') getSelectedDevice(pKey)
+                    if (equipmentType == 'fiber') getSelectedFiber(pKey)
+                    if (equipmentType ==  'techie') {
+                        var username = $(this).find('a').data('techname')
+                        $('#techie-name').fadeIn().attr('data-techieid', pKey ).find('span:first-child').text(name)
+                        $('#techie-name').removeClass('hidden').fadeIn()
+                        getTechieInstallation(pKey)
+                    }
+{#                    // lauch my request#}
+                    return false
+                })
+                $('#cancel-techie').click(function() {
+                    $('#techie-name').fadeOut().data('tachieid', '' ).find('span:first-child').text('')
+                })
+
+                function getSelectedDevice(deviceId) {
+                    var endpoint = "{% url 'get_selected_device' %}";
+                    var params = {format: 'json', deviceId: deviceId};
+                    $('body, button').css('cursor','wait');
+                    $.getJSON(endpoint, params, function(data) {
+                        $('body, button').css('cursor','default');
+                        if (data.error){
+                            $('div#top-notice-ctnr span').html(data.error).addClass('failure');
+                            $('#top-notice-ctnr').fadeIn().delay(5000);
+                        } else {
+                                // positionning recovered devices on the map
+                            var device = data.devices;
+                            var latitude = parseFloat(device.latitude)
+                            var longitude = parseFloat(device.longitude)
+                            var myLatlng = new google.maps.LatLng(latitude, longitude);
+                            var options = {
+                                center: myLatlng, zoom: 10,
+                                mapTypeId: google.maps.MapTypeId.ROADMAP
+                            }
+
+                                latitude = parseFloat(device.latitude);
+                                longitude = parseFloat(device.longitude)
+                                deviceId = device.longitude
+{#                                htmlText = ('<h4>' + device.name  + '</h4><p>' + device.description  +"</p>");#}
+                                 if (device.image)    photo = device.image
+                                    else  photo = "{% static 'img/no_photo.png' %}"
+                                    htmlText = ('<div class="tooltip-html-text">' +
+                                    "<div class='desc'>" +
+                                    "<h4>" + device.name + '</h4>' +
+                                     "<div  class='photo' style=\"background-image: url(" + photo + ")\"> </div>" +
+                                    "</div>" +
+                                    "<ul><li><b> Categorie: </b>"+ device.category.name + "</li>" +
+                                    "<li><b> Created on: </b>"+ device.display_date + "</li>" +
+                                    "<li><b> Techie: </b>"+ device.display_techie_name  + "</li></ul>" +
+                                    "</div>");
+
+                                if (device.category.icon) {
+                                    iconImg =  "{{ media_root }}" + device.category.icon
+                                }
+                                addMarkerToMap(latitude, longitude, deviceId, htmlText, iconImg);
+                        }
+                    });
+                    return false
+                }
+                function getSelectedFiber(fiberId) {
+                    var endpoint = "{% url 'get_selected_fiber' %}";
+                    var params = {format: 'json', fiberId: fiberId,};
+                    $('body, button').css('cursor','wait');
+                    $.getJSON(endpoint, params, function(data) {
+                        $('body, button').css('cursor','default');
+                        if (data.error){
+                            $('div#top-notice-ctnr span').html(data.error).addClass('failure');
+                            $('#top-notice-ctnr').fadeIn().delay(5000);
+                        } else {
+                            var myLatlng = new google.maps.LatLng(3.80627, 11.50758);
+                            var options = {
+                                center: myLatlng, zoom: 14,
+                                mapTypeId: google.maps.MapTypeId.ROADMAP
+                            }
+                            // draw polyline with the revovered coords
+                            var lineCoords = data.lines
+                            drawPoly(lineCoords)
+                        }
+                    });
+                    return false
+                }
+
+                function getTechieInstallation(techieId) {
+                    var endpoint = "{% url 'get_techie_installation' %}";
+                    var params = {format: 'json', techieId: techieId, stringDate: string_date};
+                    $('body, button').css('cursor','wait');
+                    $.getJSON(endpoint, params, function(data) {
+                        $('body, button').css('cursor','default');
+                        if (data.error){
+                            $('div#top-notice-ctnr span').html(data.error).addClass('failure');
+                            $('#top-notice-ctnr').fadeIn().delay(5000);
+                        } else {
+                            var myLatlng = new google.maps.LatLng(3.80627, 11.50758);
+                            var options = {
+                                center: myLatlng, zoom: 10,
+                                mapTypeId: google.maps.MapTypeId.ROADMAP
+                            }
+                            // draw polyline with the revovered coords
+                            var lineCoords = data.lines
+                            drawPoly(lineCoords)
+                            // positionning recovered devices on the map
+                            var devices = data.devices
+                            for (var i=0; i<=devices.length-1; i++){
+                                latitude = parseFloat(devices[i].latitude);
+                                longitude = parseFloat(devices[i].longitude)
+                                deviceId = devices[i].id
+{#                                htmlText = ('<h4>' + devices[i].name  + '</h4><p>' + devices[i].description  +"</p>");#}
+                                 if (devices[i].image)    photo = devices[i].image
+                                    else  photo = "{% static 'img/no_photo.png' %}"
+                                    htmlText = ('<div class="tooltip-html-text">' +
+                                    "<div class='desc'>" +
+                                    "<h4>" + devices[i].name + '</h4>' +
+                                     "<div  class='photo' style=\"background-image: url(" + photo + ")\"> </div>" +
+                                    "</div>" +
+                                    "<ul><li><b> Categorie: </b>"+ devices[i].category.name + "</li>" +
+                                    "<li><b> Created on: </b>"+ devices[i].display_date + "</li>" +
+                                    "<li><b> Techie: </b>"+ devices[i].display_techie_name  + "</li></ul>" +
+                                    "</div>");
+
+                                if (devices[i].category.icon) {
+                                    iconImg =  "{{ media_root }}" + devices[i].category.icon
+                                }
+                                addMarkerToMap(latitude, longitude, deviceId, htmlText, iconImg);
+                            }
+                        }
+                    });
+                    return false
+                }
+
+                function populateFibers(fibers) {
+                    $('ul.fiber li.line').not('.tpl').remove()
+                    if (fibers.length == 0) {
+                        var $emptyRow = $('<div class="empty-grid" colspan="10">No data found</div>')
+                        $emptyRow.insertBefore('ul.fiber li.line.tpl')
+                        return
+                    }
+                    var $list = $('<div></div>')
+                    for (var i = 0; i < fibers.length; i++) {
+                        var $newRow = $('ul.fiber li.line.tpl').clone().removeClass('tpl')
+                        $newRow = applyFiberTemplate($newRow, fibers[i]).show()
+                        $list.append($newRow)
+                    }
+                    $list.children().insertBefore('ul.fiber li.line.tpl')
+                }
+                function applyFiberTemplate($tplRow, fiber) {
+                    $tplRow.find('a').data('type', 'fiber')
+                    $tplRow.find('a').data('key', fiber.id)
+                    $tplRow.find('a').text(fiber.name)
+                    return $tplRow
+                }
+
+                function populateDevices(devices) {
+                    $('ul.device li.line').not('.tpl').remove()
+                    if (devices.length == 0) {
+                        var $emptyRow = $('<div class="empty-grid" colspan="10">No data found</div>')
+                        $emptyRow.insertBefore('ul.device li.line.tpl')
+                        return
+                    }
+                    var $list = $('<div></div>')
+                    for (var i = 0; i < devices.length; i++) {
+                        var $newRow = $('ul.device li.line.tpl').clone().removeClass('tpl')
+                        $newRow = applyDeviceTemplate($newRow, devices[i]).show()
+                        $list.append($newRow)
+                    }
+                    $list.children().insertBefore('ul.device li.line.tpl')
+                }
+                function applyDeviceTemplate($tplRow, device) {
+                    $tplRow.find('a').attr('data-type', 'device')
+                    $tplRow.find('a').attr('data-key', device.id)
+                    $tplRow.find('a').text(device.name)
+                    return $tplRow
+                }
+
+                function populateTechies(techies) {
+                    $('ul.techie li.line').not('.tpl').remove()
+                    if (techies.length == 0) {
+                        var $emptyRow = $('<div class="empty-grid" colspan="10">No data found</div>')
+                        $emptyRow.insertBefore('ul.techie li.line.tpl')
+                        return
+                    }
+                    var $list = $('<div></div>')
+                    for (var i = 0; i < techies.length; i++) {
+                        var $newRow = $('ul.techie li.line.tpl').clone().removeClass('tpl')
+                        $newRow = applyTechieTemplate($newRow, techies[i]).show()
+                        $list.append($newRow)
+                    }
+                    $list.children().insertBefore('ul.techie li.line.tpl')
+                }
+                function applyTechieTemplate($tplRow, techie) {
+                    var firstName = ''
+                    var lastName = ''
+                    var finalName = ''
+                    if (techie.first_name)
+                        finalName += techie.first_name
+                    if (techie.lastName)
+                        finalName += techie.lastName
+                    $tplRow.find('a').attr('data-type', 'techie')
+                    $tplRow.find('a').attr('data-key', techie.id)
+                    $tplRow.find('a').attr('data-techname', techie.username)
+                    if (finalName.length > 0)
+                        $tplRow.find('a').text(finalName)
+                    else
+                        $tplRow.find('a').text( techie.username)
+                    return $tplRow
+                }
+                $("li#clear-map").click(function() {
+                    unsetPolylines()
+                    unsetMarkers()
+                    $('.recents-equipments').removeClass('active')
+                    $('section#fiber  a').removeClass('active')
+                    $('section#device  a').removeClass('active')
+                    $('section#city  a').removeClass('active')
+                    return false
+                })
+                $('#suggestions-for-view .close').click(function() {
+                    $(this).parent('#suggestions-for-view').hide()
+                })
+                $('input[name="datefilter"]').daterangepicker({
+                      autoUpdateInput: false,
+                      locale: {
+                          cancelLabel: 'Clear'
+                      }
+                });
+                $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
+                    $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+{#                    var string_date = $('#daterange').val($(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY')))#}
+                      string_date = (picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'))
+                });
+
+                $('input[name="datefilter"]').on('cancel.daterangepicker', function(ev, picker) {
+                    $(this).val('');
+                    string_date = ''
+                });
+                function changeDevicePosition(deviceId, latitude, longitude){
+                    var endpoint = "{% url 'change_device_position' %}";
+                    var params = {format: 'json', deviceId:deviceId, latitude: latitude, longitude:longitude};
+                    $('body, button').css('cursor','wait');
+                    $.getJSON(endpoint, params, function(data) {
+                        $('body, button').css('cursor','default');
+                        if (data.error){
+                            $('div#top-notice-ctnr span').html(data.error).addClass('failure');
+                            $('#top-notice-ctnr').fadeIn().delay(5000);
+                        } else {
+                            var myLatlng = new google.maps.LatLng(latitude, longitude);
+                            var options = {
+                                center: myLatlng, zoom: 22,
+                                mapTypeId: google.maps.MapTypeId.ROADMAP
+                            }
+                            map.panTo(myLatlng)
+                        }
+                    })
+                }
+
+                function closeLightbox(){
+                    $('#lightbox .dialog.new-coordinate').hide()
+                    $('#lightbox .dialog.new-device').hide()
+                    $('#lightbox').fadeIn().hide()
+                }
+                function setnewdevice() {
+                    $('#lightbox .dialog.new-device').show()
+                    $('#lightbox').fadeIn().show()
+                }
+                $("#add-coords").click(function () {
+                    $('#lightbox .dialog.new-coordinate input').val('')
+                    $('#lightbox .dialog.new-coordinate').show()
+                    $('#lightbox').fadeIn().show()
+                })
+                $('#lightbox .dialog.new-coordinate button.validate').click(function () {
+                    var rawCoords = $('#lightbox .dialog.new-coordinate input').val()
+                    if (rawCoords == ''){
+                        alert('No coordinates entered')
+                        $('#lightbox .dialog.new-coordinate input').focus()
+                        return
+                    }
+                    var coords = rawCoords.split(';')
+                    if (coords.length != 2){
+                        alert('Respect the format please')
+                        $('#lightbox .dialog.new-coordinate input').val('')
+                        $('#lightbox .dialog.new-coordinate input').focus()
+                        return
+                    }
+                    var latitude = coords[0]
+                    var longitude = coords[1]
+                    addMarkerToMap(latitude, longitude, '', 'New device', "{% static 'img/grey_pin.png' %}");
+                    var myLatlng = new google.maps.LatLng(latitude, longitude)
+                    map.panTo(myLatlng)
+                    closeLightbox()
+
+                    $('form#equipment input.latitude').val(latitude)
+                    $('form#equipment input.longitude').val(longitude)
+                    $('form#equipment input.origin').val('home')
+                    setnewdevice()
+                })
+                $('#close').click(function(){
+                    $('#lightbox .dialog.new-coordinate input').val('')
+                    $('#lightbox .dialog.new-device input').val('')
+                    $('#lightbox .dialog.new-device textarea').text('')
+                    $('#lightbox .dialog.new-coordinate input').val('')
+                    $('#lightbox .dialog.new-coordinate').hide()
+                    $('#lightbox').fadeIn().hide()
+                })
+                $('button.cancel').click(function(){
+                    $('#lightbox .dialog.new-coordinate input').val('')
+                    $('#lightbox .dialog.new-device input').val('')
+                    $('#lightbox .dialog.new-device textarea').text('')
+                    $('#lightbox .dialog.new-coordinate input').val('')
+                    $('#lightbox .dialog.new-coordinate').hide()
+                    $('#lightbox').fadeIn().hide()
+                })
+            })()
+        </script>
+    </body>
+</html>

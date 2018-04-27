@@ -1,0 +1,83 @@
+{% load i18n %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <link rel="icon" href="{% static 'media/images/favicon.ico' %}" type="image/x-icon">
+        {% block meta %}{% endblock %}
+		{% block page_title %}{% endblock %}
+        {% if request.META.HTTP_HOST == 'localhost' %}
+            <style type="text/css">
+                @font-face {
+                    font-family: Open Sans;
+                    src: local(Open Sans), url('/static/css/fonts/Open_Sans.woff') format('opentype');
+                }
+            </style>
+        {% else %}
+            <style type="text/css">
+                /* Open Sans Light, Normal, Bold */
+                @font-face {
+                    font-family: Open Sans;
+                    src: local(Open Sans), url('/Open_Sans.woff') format('opentype');
+                }
+                /* Open Sans Latin Lighter */
+                @font-face {
+                    font-family: 'Open Sans';
+                    font-style: normal;
+                    font-weight: 300;
+                    src: local('Open Sans Light'), local('OpenSans-Light'), url(/Open_Sans_Light) format('woff2');
+                                  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+                }
+            </style>
+        {% endif %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/forms.css' %}?version=3.1">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/grids.css' %}?version=3.1">
+
+        <style type="text/css">
+        </style>
+		{% block custom_head %}{% endblock %}
+		{% block custom_style %}{% endblock %}
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div id="top-header" style="color: #FFF; font-size: 1.7em;height: 35px; background-color: #3C8F03; position: fixed;left: 0; top: 0; padding-top: 15px; width: 102%; z-index: 11">
+                <div style="width: 1%" href="#menu-toggle" class="" id="menu-toggle"></div>
+                <div style=" text-align: center;width: 95%">CREOLINK COMMUNICATIONS</div>
+            </div>
+            <div id="wrapper">
+                <div id="sidebar-wrapper" style="z-index: 10;">
+                    <div id="logo" style="float: left; height: 150px; width: 100%"></div>
+                    {% block sidebar-nav %}
+                    {% endblock %}
+                    {% block live_drawing_data %}
+                    {% endblock %}
+                </div>
+        <!-- /#sidebar-wrapper -->
+
+                {% block content %}
+                {% endblock %}
+            </div>
+
+            <div class="top-notice-ctnr hidden">
+                <span class="floating-notice" style="float: none; position: static"></span>
+            </div>
+
+            {% block modal %}
+            {% endblock %}
+            <!-- /#wrapper -->
+
+            <!-- jQuery -->
+            <script src="{% static 'js/jquery-1.8.2.min.js' %}"></script>
+
+            <!-- Bootstrap Core JavaScript -->
+            <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+            <!-- Menu Toggle Script -->
+            {% block custom_js %}
+            {% endblock %}
+        </div>
+
+    </body>
+</html>

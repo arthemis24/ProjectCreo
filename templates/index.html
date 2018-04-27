@@ -1,0 +1,172 @@
+{% extends "base2.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block meta %}
+<meta name="abstract" content=""/>
+{% endblock %}
+{% block page_title %} <title>Geotracking | Mon parcour</title> {% endblock %}
+{% block custom_head %}
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+{#    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>#}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui.min.css' %}">
+    <style type="text/css">
+
+    </style>
+    <script src="{% static 'js/jquery-1.8.2.min.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'js/ikwen-util.js' %}"></script>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+    <!-- Include Required Prerequisites -->
+{% endblock %}
+{% block content %}
+
+    <div id="page-content-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <a href="#menu-toggle"   id="menu-toggle" style="position: fixed; z-index: 20">Menu</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block custom_js %}
+
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="{% static 'js/jquery-1.8.2.min.js' %}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+    <!-- Menu Toggle Script -->
+    <script>
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
+    </script>
+    <script type="text/javascript">
+        (function() {
+            var markerCount = 0, map;
+            ikwen.eventData = [];
+            ikwen.eventDataCount = 0;
+            ikwen.markerList = [];
+            ikwen.currentMarkerListOnTheMap = [];
+            var intervalId = null;
+            var currentDeviceId = '';
+
+            initialize();
+
+            var latitude, longitude, htmlText;
+            {% for device in devices %}
+                latitude = parseFloat("{{ device.latitude }}");
+                longitude = parseFloat("{{ device.longitude }}");
+                htmlText = ('<h4>' + "{{ device.name }}" + '</h4><p>' + "{{ device.description }}" +"</p>");
+                addMarkerToMap(latitude, longitude, htmlText);
+            {% endfor %}
+{#            {% for fiber in fibers %}#}
+{#                fiberLine = {{ fiber }}#}
+{#                lineCoords = constructPolyCoords(fiberLine)#}
+{#                alert(fiberLine)#}
+{#                addMarkerToMap(latitude, longitude, htmlText);#}
+{#            {% endfor %}#}
+
+            function getDevicePositions(deviceId, string_date){
+                unsetMarkers();
+                ikwen.eventData = [];
+                clearInterval(replayTimerId);
+                var endPoint = "";
+                var params = {format: 'json', device_id: deviceId, string_date: string_date};
+                $('div.overlay.spinner').removeClass('hidden').fadeIn()
+                $.getJSON(endPoint, params, function(data) {
+                    $('div.overlay.spinner').addClass('hidden').fadeOut()
+                    if (data.error) $('#submit-result').text(data.error);
+                    else {
+                        ikwen.markerList = data.event_data;
+
+                        for (var i=0; i<ikwen.markerList.length; i++) {
+                            ikwen.eventData.push(ikwen.markerList[i])
+                        }
+                        populateDetailsGrid(ikwen.eventData.reverse(), applyDeviceDetailsTemplate);
+                        var lastIndex = ikwen.markerList.length- 1,
+                            lat = ikwen.markerList[lastIndex].latitude,
+                            long = ikwen.markerList[lastIndex].longitude,
+                            htmlMarkupForInfoWindow = 'keep go';
+                        addMarkerToMap(lat, long, htmlMarkupForInfoWindow);
+{#                        unsetMarkers()#}
+                        if (ikwen.eventData.length > 1) {
+                            drawTheWay(ikwen.eventData)
+                        }
+                    }
+                })
+            }
+
+         //Initializes the map…
+        function initialize() {
+            var myLatlng = new google.maps.LatLng(3.80627, 11.50758);
+            var map_canvas = document.getElementById('map_canvas');
+            var map_options = {
+                center: myLatlng, zoom: 10,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            map = new google.maps.Map(map_canvas, map_options);
+        }
+
+        // set a marker to the map
+        function addMarkerToMap(lat, long, htmlMarkupForInfoWindow){
+            var infowindow = new google.maps.InfoWindow();
+            var myLatLng = new google.maps.LatLng(lat, long);
+            var marker = new google.maps.Marker({
+                position: myLatLng,
+                map: map,
+{#                animation: google.maps.Animation.DROP#}
+            });
+            ikwen.currentMarkerListOnTheMap.push(marker);
+            //Gives each marker an Id for the on click markerCount++;
+            // Creates the event listener for clicking the marker
+            // and places the marker on the map
+            google.maps.event.addListener(marker, 'click', (function(marker, markerCount) {
+                return function() { infowindow.setContent(htmlMarkupForInfoWindow); infowindow.open(map, marker); }
+             })(marker, markerCount));
+            //Pans map to the new location of the marker
+            map.panTo(myLatLng)
+        }
+
+        // set markers to invisible or remove every markers from the marker list
+        function unsetMarkers() {
+            //Loop through all the markers and remove
+            for (var i = 0; i < ikwen.currentMarkerListOnTheMap.length; i++) {
+                ikwen.currentMarkerListOnTheMap[i].setMap(null);
+            }
+            ikwen.currentMarkerListOnTheMap = [];
+        }
+        function constructPolyCoords(eventData){
+            var myCoord = [];
+            var positions = [];
+                positions.push(ikwen.eventData[0]);
+            for (var i=1; i<ikwen.eventData.length - 1; i++){
+                if (ikwen.eventData[i] != positions[i-1]){
+                    positions.push(ikwen.eventData[i])
+                }
+            }
+            for (i=0; i<positions.length - 1; i++){
+                var pos = new google.maps.LatLng(positions[i].latitude, positions[i].longitude);
+                myCoord.push(pos);
+                console.log(pos.lat());
+                console.log(pos.lng())
+            }
+            return myCoord
+        }
+
+var width = $(document).width();
+            var height = $(document).height();
+{#            var mapWidth = width - 250#}
+            $('#page-content-wrapper').css({'height': height});
+            $('#side-bar').css({'height': height});
+        })()
+    </script>
+
+{% endblock %}

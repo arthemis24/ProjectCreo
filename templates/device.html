@@ -1,0 +1,361 @@
+{% extends "base2.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block meta %}
+<meta name="abstract" content=""/>
+{% endblock %}
+{% block page_title %} <title>Creolink | Locator</title> {% endblock %}
+{% block custom_head %}
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui.min.css' %}">
+    <style type="text/css">
+        #content {background: #FFF}
+        .text {margin: 30px 0 0 15px}
+
+        body {font-size: 1.2em; height: 100%; margin: 0; padding: 0; overflow: auto }
+        div.overlay.spinner {background-color: rgba(255, 255, 255, .54); background-image: url("{% static 'img/spinner1.gif' %}"); height: 100%; position: fixed; left: 0; top: 0; width: 100%; z-index: 100}
+
+        #tab-ctnr {float: left; }
+        .nav-tabs>li {font-size: 1em;width: 50%;}
+        textarea, select, input[type="text"], input[type="password"],input[type="email"], input[type="url"], input[type="search"]{border: solid 1px #349800; font-size:.9em; height: 30px; width: 98%}
+        textarea {height: 100px;}
+        select {height: 42px; width: 99%}
+        label {color: #313030; float: left;font-size:1em}
+        #sidebar-wrapper {background-color: #000; width: 0}
+        #sidebar-wrapper .sidebar-nav {display: none}
+        .btn {font-size: 1em;padding: 12px 60px}
+        .form-group {margin-top: 10px}
+        .nav-tabs>.active>a, .nav-tabs>.active>a:hover, .nav-tabs>.active>a:focus {color: #349800}
+        .nav-tabs a, .nav-tabs {color: #555}
+        .btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
+            rgba(0,0,0,0.25);
+            background-color: #136920;
+            background-image: -moz-linear-gradient(top,#349800,#136920);
+            background-image: -webkit-gradient(linear,0 0,0 100%,from(#349800),to(#136920));
+            background-image: -webkit-linear-gradient(top,#349800,#136920);
+            background-image: -o-linear-gradient(top,#349800,#136920);
+            background-image: linear-gradient(to bottom,#349800,#136920);
+            background-repeat: repeat-x;
+            border-color: #349800 #349800 #39710d;
+            border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff349800',endColorstr='#ff136920',GradientType=0);
+            filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+        }
+        .btn-primary.stop,.btn-secondary.stop, .btn-primary.stop:hover,.btn-secondary.stop:hover, .btn-primary.stop:active,.btn-secondary.stop:active, .btn-primary.stop:visited, .btn-secondary.stop:visited {
+            rgba(0,0,0,0.25);
+            background-color: #dd0c0c;
+            border-color: #a30001;
+            background-image: -moz-linear-gradient(top,#ff0924, #dd0c0c);
+            background-image: -webkit-gradient(linear,0 0,0 100%,from(#ff0924),to(#dd0c0c));
+            background-image: -webkit-linear-gradient(top,#ff0924,#dd0c0c);
+            background-image: -o-linear-gradient(top,#ff0924,#dd0c0c);
+            background-image: linear-gradient(to bottom,#ff0924,#dd0c0c);
+            background-repeat: repeat-x;
+            border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffff0924',endColorstr='#ffdd0c0c',GradientType=0);
+            filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+        }
+        .btn-file input[type=file] {position: absolute;top: 0;right: 0;min-width: 100%; min-height: 100%;font-size: 100px; text-align: right;
+    filter: alpha(opacity=0);opacity: 0; outline: none; background: white; cursor: inherit;display: block;
+}
+        button .icon {background-size: 100% auto;height: 18px;width: 18px;}
+        #position {float: left; padding-bottom: 25px;}
+        #position li {font-size: .8em; color: #AAA; float: left; margin-top: 10px;}
+        #position li b {float: left}
+        #position li:last-child {}
+        .nav-tabs>li>a {padding-top: 12px; padding-bottom: 12px}
+        .nav-tabs li .icon { background-size: 100% auto; background-position: center; height: 20px;width: 20px;margin: 12px 10px 0 6px;}
+    </style>
+    <script src="{% static 'js/jquery-1.8.2.min.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'js/ikwen-util.js' %}"></script>
+{#    <script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyBD5bSEUzqMvAeOCnEctZ52G1Qt-tFUP-s"></script>#}
+    <!-- Include Required Prerequisites -->
+{% endblock %}
+{% block content %}
+    <div id="page-content-wrapper" style="float: right">
+        <div class="container-fluid" style="padding: 0">
+            <div class="row"  id='main-row' style="float: left; min-height: 400px; overflow-y: auto; margin-left: 0; width: 98% ">
+                <div class="col-lg-12" style="float: left; width: 100%  ">
+
+                    <div id="demo"></div>
+                    <div id="tab-ctnr" style="margin: 35px 2%;overflow: auto; width: 94%">
+                        <ul class="nav nav-tabs" style="margin-bottom: 0">
+                            <li class="active">
+                                <span class="icon" style="background-image:url({% static 'img/fiber.png' %})"></span>
+                                <a data-toggle="tab" href="#menu1">Fiber</a>
+                            </li>
+                            <li>
+                                <span class="icon" style="background-image:url({% static 'img/switch.png' %});background-size: 120% auto;height: 20px; margin-right: 5px;margin-top: 15px;width: 24px;"></span>
+                                <a data-toggle="tab" href="#menu2">Equipment</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" style="float: left;overflow-y: auto;padding: 12px 15px;width: 90%">
+                            <div id="position">
+                               <p>You  are here</p>
+                                <div class="icon" style="background-image:url({% static 'img/green-pin.png' %});height: 35px;width: 35px;margin-top: 20px;" ></div>
+                                <ul>
+                                    <li class="lat">
+                                        <b>Lat: </b>
+                                        <span></span>
+                                    </li>
+                                    <li class="lng" style="margin-top: 0">
+                                        <b>Lng: </b>
+                                        <span></span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="form-group">
+                            </div>
+                            <div id="menu1" class="tab-pane fade  in active">
+                                <form role="form" id="fiber" style="clear: both">
+                                    <div class="form-group">
+                                        <label for="type">Type</label>
+                                        <select class="form-control line-type">
+                                            <option value="">Select a type</option>
+                                            {% for fiber_type in fiber_types %}
+                                                <option value="{{ fiber_type.id }}">{{ fiber_type.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="type">Line</label>
+                                        <select class="form-control line">
+                                            <option value="">Select a fiber line</option>
+                                            {% for line in fibers %}
+                                                <option value="{{ line.id }}">{{ line.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="clear: both">
+                                        <button type="button" class="btn btn-primary btn-lg btn-block start">
+                                            <i class="icon"  style="background-image:url({% static 'img/reload.png' %})" ></i>
+                                            <span style="float: inherit;">Start over</span>
+                                        </button>
+                                        <button type="button" class="btn btn-secondary btn-lg btn-block continue" style="margin-top: 20px">
+                                            <i class="icon"  style="background-image:url({% static 'img/electricity-icon.png' %})" ></i>
+                                            <span style="float: inherit;">Continue</span>
+                                        </button>
+{#                                        <button type="submit" class="btn btn-default stop" onclick="stopWatch();">End</button>#}
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div id="menu2" class="tab-pane fade">
+                                <form role="form" id="equipment" style="clear: both" method="post" action="{% url 'save_device_position' %}"  enctype="multipart/form-data">{% csrf_token %}
+                                    <input type="hidden" class="form-control longitude" name="longitude" >
+                                    <input type="hidden" class="form-control latitude" name="latitude">
+                                    <div class="form-group">
+                                        <label for="type">Type</label>
+                                        <select class="form-control category" name="category">
+                                            <option value="">Select a type</option>
+                                            {% for device in device_categories %}
+                                                <option value="{{ device.id }}">{{ device.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="type">Name</label>
+                                        <input type="text" class="form-control name" name="name">
+                                    </div>
+
+
+                                    <div class="form-group input-group">
+                                        <label for="">
+                                        Photo
+                                        <input type="file" style=" border-radius: 7px; width: 75%" name="photo">
+                                        </label>
+                                    </div>
+
+                                    <div class="form-group" style="clear: both;float: left;margin-top: 22px;width: 100%;">
+                                        <label for="type">Description</label>
+                                        <textarea rows="4" class="desc" name="description"></textarea>
+                                    </div>
+                                    <div class="form-group" style="clear: both">
+                                        <button type="button" class="btn btn-secondary btn-lg btn-block">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block modal %}
+
+    <div id="lightbox" class="hidden">
+        <div class="wrapper">
+            <div class="dialog has-shade confirm-device">
+                <div class="stage" style="padding: 10px 10px 6px">
+                    <div style="color:#343943; font-size: .9em; padding: 10px; text-align: center"> Do you confirm this operation?</div>
+                    <div class='controls' style="border-top: solid 1px #C7FCD4; float: right; margin-top: 15px; padding-top: 5px; width: 100%">
+                        <button class="btn btn-primary btn-lg btn-block validate">Validate</button>
+                        <button class="btn btn-secondary btn-lg btn-block cancel" style="margin-right: 15px">Cancel</button>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+ {% endblock %}
+{% block custom_js %}
+    <script>
+        var x = document.getElementById("position");
+        getLocation()
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(showPosition);
+            } else {x.innerHTML = "Geolocation is not supported by this browser.";}
+        }
+
+        function showPosition(position) {
+            $('div#position .lat span').text(position.coords.latitude)
+            $('form#equipment input.latitude').val(position.coords.latitude)
+            $('div#position .lng span').text(position.coords.longitude)
+            $('form#equipment input.longitude').val(position.coords.longitude)
+        }
+    </script>
+    <script type="text/javascript">
+        (function() {
+            var latitude,longitude, operation, watchId, line, lineType;
+            $('div#lightbox .confirm-device button.cancel').click(function() {
+                $('div#lightbox').hide()
+                return false
+            });
+            $('div#lightbox .confirm-device button.validate').click(function() {
+                $('div#lightbox').hide()
+                $('form#equipment').submit()
+            })
+            $('form#fiber button.start').live('click', function() {
+                keepCurrentLineData()
+                line = localStorage.getItem('line')
+                lineType = localStorage.getItem('lineType')
+                operation ='start'
+                if (line == '' || lineType == ''){
+                    alert("Specify a line please");
+                    return false
+                }
+                deleteOldEventData(line)
+                if (navigator.geolocation){
+                    var watchId = navigator.geolocation.watchPosition(lineSuccessCallback, errorCallback, {enableHighAccuracy:true});
+                    $('form#fiber button.start').removeClass('start').addClass('stop').find('span').text('Stop')
+                }else
+                    alert("Sorry! Your browser does not allow HTML5 geolocation <br/> operation canceled");
+                return false
+            })
+            $('form#fiber button.continue').live('click', function() {
+                keepCurrentLineData()
+                operation ='continue'
+                line = localStorage.getItem('line')
+                lineType = localStorage.getItem('lineType')
+                if (line == '' || lineType == ''){
+                    alert("Specify a line please");
+                    return false
+                }
+                if (navigator.geolocation){
+                    var watchId = navigator.geolocation.watchPosition(lineSuccessCallback, errorCallback, {enableHighAccuracy:true});
+                    $('form#fiber button.continue').removeClass('continue').addClass('stop').find('span').text('Stop')
+                }else
+                    alert("Sorry! Your browser does not allow HTML5 geolocation <br/> operation canceled");
+                return false
+            })
+            $('form#fiber button.stop').live('click', function() {
+                stopWatch()
+                if (operation == 'start')
+                    $('form#fiber button.stop').removeClass('stop').addClass('start').find('span').text('Start over')
+                else
+                    $('form#fiber button.stop').removeClass('stop').addClass('continue').find('span').text('Continue')
+                return false
+            })
+            $('form#equipment button').click(function() {
+                $('div#lightbox').fadeIn()
+                return false
+            })
+            function lineSuccessCallback(position){
+                latitude = position.coords.latitude
+                longitude = position.coords.longitude
+                var fiberline = localStorage.getItem('line')
+                var fiberLineType = localStorage.getItem('lineType')
+                if (line == "" || lineType == ""){
+                    alert("Sorry! No line or line type selected <br/> operation canceled");
+                    return false
+                }
+                saveLineCoords(fiberline, latitude, longitude,fiberLineType)
+            };
+            function EquipmentSuccessCallback(position){
+                latitude = position.coords.latitude
+                longitude = position.coords.longitude
+                var category = $('form#equipment .category').val()
+                var name = $('form#equipment .name').val()
+                var zone = $('form#equipment .zone').val()
+                var desc = $('form#equipment textarea.desc').val()
+                saveEquipmentCoords(category, name, desc, latitude, longitude)
+            };
+            function errorCallback(error){
+                switch(error.code){
+                    case error.PERMISSION_DENIED:
+                        alert("The user has not allowed access to his position");
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        alert("The user's location could not be determined");
+                        break;
+                    case error.TIMEOUT:
+                        alert("Time out");
+                        break;
+                }
+            };
+            function keepCurrentLineData(){
+                line = $('form#fiber .line').val()
+                lineType = $('form#fiber .line-type').val()
+                localStorage.setItem('line', line)
+                localStorage.setItem('lineType', lineType)
+            }
+            function stopWatch(){
+                navigator.geolocation.clearWatch(watchId);
+                line = localStorage.removeItem('line')
+                lineType = localStorage.removeItem('lineType')
+                location.reload();
+            }
+            function deleteOldEventData(line){
+                var endpoint = "{% url 'delete_old_way' %}";
+                var params = {format: 'json', line: line};
+                $('body, button').css('cursor','wait');
+                $.getJSON(endpoint, params, function(data) {
+                    $('body, button').css('cursor','default');
+                    if (data.error){
+                        $('div#top-notice-ctnr span').html(data.error).addClass('failure');
+                        $('#top-notice-ctnr').fadeIn().delay(5000);
+                    } else {
+
+                    }
+                });
+            }
+            function saveLineCoords(line, latitude, longitude, lineType) {
+                var endpoint = "{% url 'save_fiber_way' %}";
+                var params = {format: 'json', line: line, latitude:latitude, longitude:longitude, lineType:lineType};
+                $('body, button').css('cursor','wait');
+                $.getJSON(endpoint, params, function(data) {
+                    $('body, button').css('cursor','default');
+                    if (data.error){
+                        $('div#top-notice-ctnr span').html(data.error).addClass('failure');
+                        $('#top-notice-ctnr').fadeIn().delay(5000);
+                    } else {
+
+                        document.getElementById("fiber").reset();
+                    }
+                });
+                return false
+            }
+
+            var height = $(window).height() - 200;
+            $('#main-row').css({'height': height})
+
+            $('#page-content-wrapper').css({'float': 'right','padding': 0});
+        })()
+    </script>
+{% endblock %}

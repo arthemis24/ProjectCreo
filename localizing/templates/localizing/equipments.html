@@ -137,6 +137,7 @@
                         <section id="dist-reload"></section>
                     </div>
                 </div>
+            {% if perms.device.can_edit and perms.fiber.can_edit %}
                 <div id="tools">
                     <div class="coords subtle-shade">
                         <div class="lat coord">
@@ -208,10 +209,12 @@
                              </div>
                         </form>
                     </div>
+
                     <div class="action subtle-shade" id="toggle-search-inp" style="margin-left: -30px">
                          <span id='search-btn' style="background-image: url('{% static "img/search.png" %}')" title="search"></span>
                     </div>
                 </div>
+            {% endif %}
                 <div class="measure subtle-shade ik-hdn" id="current-polyline-length" style="background-color: #fff; color: #2cab2c; padding: 5px; position: fixed; right: 70px; top: 10px;z-index: 10">0.00 Meter</div>
                 <div class="action user subtle-shade" style="position: fixed; right: 20px; top: 10px;z-index: 10">
                      <span id='show-search' style="background-image: url('{% static "img/user-icon.png" %}');" title="search"></span>

@@ -5,7 +5,7 @@ from datetime import datetime
 
 from django.contrib.admin import AdminSite
 from django.contrib.admin.models import LogEntry
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.csrf import csrf_protect
 # from ajaxuploader.backends.local import LocalUploadBackend
@@ -23,8 +23,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic.base import TemplateView
 from django.db.models import Q
 from django.contrib.auth.models import User, Group
-from CreolinkLocalizer import settings
-# from conf import settings
+# from CreolinkLocalizer import settings
+from conf import settings
 from localizing.models import Device, FiberEventData, DeviceCategory, Fiber, Zone, City, Operator, UserProfile
 
 _BOT = 'Bot'
@@ -140,6 +140,7 @@ class Statistic(BaseView):
         return context
 
 
+@permission_required
 def update_device_city():
     devices_qs = Device.objects.all()
     city = City.objects
@@ -153,6 +154,7 @@ def update_device_city():
         device.save()
 
 
+@permission_required
 def update_fiber_city():
     fibers_qs = Fiber.objects.all()
     for fiber in fibers_qs:
@@ -246,6 +248,7 @@ def retrieve_dates_from_interval(string_date):
     return dates
 
 
+@login_required
 def get_only_equipments(request, *args, **kwargs):
     member = request.user
     profile = UserProfile.objects.get(member=member)
@@ -258,6 +261,7 @@ def get_only_equipments(request, *args, **kwargs):
     return HttpResponse(json.dumps({'equipments': response}), 'content-type: text/json', **kwargs)
 
 
+@login_required
 def get_only_fibers(request, *args, **kwargs):
     member = request.user
     profile = UserProfile.objects.get(member=member)
@@ -274,6 +278,7 @@ def get_only_fibers(request, *args, **kwargs):
     return HttpResponse(json.dumps({'lines': lines}), 'content-type: text/json', **kwargs)
 
 
+@login_required
 def get_equipments_and_fibers(request, *args, **kwargs):
     member = request.user
     profile = UserProfile.objects.get(member=member)
@@ -313,6 +318,7 @@ def delete_old_way(request, *args, **kwargs):
 
 
 @login_required
+@permission_required
 def save_device(request, *args, **kwargs):
     description = request.GET.get('description')
     latitude = request.GET.get('latitude')
@@ -350,6 +356,7 @@ def save_device(request, *args, **kwargs):
 
 
 @login_required
+@permission_required
 def save_device_position(request, *args, **kwargs):
     name = request.POST.get('name', '')
     description = request.POST.get('description')
@@ -378,6 +385,7 @@ def save_device_position(request, *args, **kwargs):
 
 
 @login_required
+@permission_required
 def save_optical_fiber_position(request, *args, **kwargs):
     line_id = request.GET.get('line')
     latitude = request.GET.get('latitude')
@@ -411,6 +419,7 @@ def construct_line_coords(str_coords):
 
 
 @login_required
+@permission_required
 def save_live_optical_fiber_coords(request, *args, **kwargs):
     line_id = request.GET.get('line')
     str_coords = request.GET.get('strCoords')
@@ -549,6 +558,7 @@ def filter_network_data(request, *args, **kwargs):
     )
 
 
+@login_required
 def find_lines(request, *args, **kwargs):
     lines = []
     keyword = request.GET.get('query')
@@ -568,6 +578,7 @@ def find_lines(request, *args, **kwargs):
     return HttpResponse(response)
 
 
+@login_required
 def search(request, *args, **kwargs):
     from django.db.models import Q
     keyword = request.GET.get('query')
@@ -609,6 +620,7 @@ def search(request, *args, **kwargs):
     return HttpResponse(response)
 
 
+@login_required
 def load_equipments_by_city(request, *args, **kwargs):
     keyword = request.GET.get('query')
     member = request.user
@@ -645,6 +657,7 @@ def load_equipments_by_city(request, *args, **kwargs):
     return HttpResponse(response)
 
 
+@login_required
 def get_selected_device(request, *args, **kwargs):
     keyword = request.GET.get('deviceId')
     equipments = Device.objects.get(id=keyword)
@@ -656,6 +669,8 @@ def get_selected_device(request, *args, **kwargs):
     return HttpResponse(response)
 
 
+@login_required
+@permission_required
 def change_device_position(request, *args, **kwargs):
     latitude = request.GET.get('latitude')
     longitude = request.GET.get('longitude')
@@ -741,6 +756,7 @@ def get_techie_installation(request, *args, **kwargs):
         }),
         content_type='application/json'
     )
+
 
 
 def get_recent_equipments(request, *args, **kwargs):
@@ -876,6 +892,7 @@ def grab_devices(request, *args, **kwargs):
     )
 
 
+@login_required
 def grab_device_info(request, *args, **kwargs):
     device_id = request.GET.get('deviceId')
     device = Device.objects.get(pk=device_id)
@@ -917,6 +934,7 @@ def grab_fiber_info(request, *args, **kwargs):
     )
 
 
+
 def grab_fiberlines_data(fiber_lines):
     lines = []
     for fiber_line in fiber_lines:
@@ -935,6 +953,7 @@ def grab_fiberlines_data(fiber_lines):
     return lines
 
 
+@login_required
 def update_fibers_distance(request, *args, **kwargs):
     fiber_id = request.GET.get('fiberId')
     distance = request.GET.get('distance')
@@ -945,6 +964,7 @@ def update_fibers_distance(request, *args, **kwargs):
         json.dumps({"success": True}),
         content_type='application/json'
     )
+
 
 
 def check_new_fiber(request, *args, **kwargs):
@@ -972,6 +992,7 @@ def check_new_fiber(request, *args, **kwargs):
     )
 
 
+@login_required
 def get_specific_fiber_data(request, *args, **kwargs):
     member = request.user
     techie = UserProfile.objects.get(member=member)
@@ -1004,6 +1025,7 @@ def get_specific_fiber_data(request, *args, **kwargs):
     )
 
 
+@login_required
 def get_specific_device_data(request, *args, **kwargs):
     device_id = request.GET.get('deviceId')
     device_qs = Device.objects.get(id=device_id)
@@ -1025,6 +1047,7 @@ def get_specific_device_data(request, *args, **kwargs):
     )
 
 
+@login_required
 def check_new_device(request, *args, **kwargs):
     member = request.user
     techie = UserProfile.objects.get(member=member)
@@ -1058,6 +1081,7 @@ def check_new_device(request, *args, **kwargs):
     )
 
 
+@login_required
 def check_data_integrity(request, *args, **kwargs):
     online_fiber_ids = []
     online_device_ids = []
@@ -1096,6 +1120,7 @@ def check_data_integrity(request, *args, **kwargs):
     )
 
 
+@login_required
 def check_line_update(request, *args, **kwargs):
     fiberIds = request.GET.get('fiberIds')
     if len(fiberIds) > 0:
@@ -1132,6 +1157,7 @@ def check_line_update(request, *args, **kwargs):
     )
 
 
+@login_required
 def get_updated_fibers(request, *args, **kwargs):
     last_log_updated_id = request.GET.get('last_updated_log_id')
     fiber_content_type = ContentType.objects.get(model='fiber')
